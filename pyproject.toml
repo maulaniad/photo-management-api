@@ -1,0 +1,48 @@
+[tool.poetry]
+name = "Photo Management API"
+version = "0.1.0"
+description = "REST API for Photo Management App"
+authors = ["Adrian Maulani <maulani.ad@gmail.com>"]
+readme = "README.md"
+package-mode = false
+
+[tool.poetry.dependencies]
+python = "^3.12"
+celery = "^5.4.0"
+django = "^5.0.7"
+django-celery-beat = "^2.6.0"
+django-celery-results = "^2.5.1"
+django-cors-headers = "^4.4.0"
+django-filter = "^24.3"
+django-redis = "^5.4.0"
+django-storages = {extras = ["s3"], version = "^1.14.4"}
+djangorestframework = "^3.15.2"
+drf-standardized-errors = "^0.14.1"
+fastnanoid = "^0.4.1"
+gevent = "^24.2.1"
+hiredis = "^3.0.0"
+lz4 = "^4.3.3"
+psycopg = "^3.2.1"
+psycopg-binary = "^3.2.1"
+pyjwt = "^2.9.0"
+python-decouple = "^3.8"
+sentry-sdk = "^2.13.0"
+weasyprint = "^62.3"
+
+[tool.poetry.group.dev.dependencies]
+celery-types = "^0.22.0"
+django-stubs = "^5.0.4"
+djangorestframework-stubs = "^3.15.0"
+freezegun = "^1.5.1"
+rich = "^13.7.1"
+ruff = "^0.5.5"
+
+[tool.ruff]
+line-length = 120
+
+[tool.ruff.format]
+indent-style = "space"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
