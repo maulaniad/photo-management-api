@@ -1,6 +1,6 @@
 from django.db.models import Q
 
-from database.models import User
+from database.models.user import User
 
 
 class UserRepo:
@@ -9,19 +9,19 @@ class UserRepo:
         return User.objects.all().select_related('profile')
 
     @staticmethod
-    def get_user(id_or_oid: int | str) -> User | None:
+    def get_user(user_id: int | str):
         return User.objects.filter(
-            Q(id=id_or_oid) | Q(oid=id_or_oid)
+            Q(id=user_id) | Q(oid=user_id)
         ).select_related('profile').first()
 
     @staticmethod
-    def get_user_by_email(email: str) -> User | None:
+    def get_user_by_email(email: str):
         return User.objects.filter(
             email=email
         ).select_related('profile').first()
 
     @staticmethod
-    def create_user(email: str, password: str, is_superuser: bool = False) -> User:
+    def create_user(email: str, password: str, is_superuser: bool = False):
         return User.objects.create(
             email=email,
             password=password,

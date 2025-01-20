@@ -10,7 +10,7 @@ from django.utils import timezone
 from rest_framework.authentication import BaseAuthentication
 from rest_framework.request import Request
 
-from database.models import User
+from database.models.user import User
 from database.repositories import UserRepo
 from helpers import HttpError
 
@@ -24,7 +24,6 @@ class AuthenticationBackend(BaseBackend):
     repo = UserRepo
 
     def authenticate(self, request: HttpRequest, email=None, password=None, **kwargs):
-        print(email, password)
         if not email or not password:
             raise HttpError._400_("Email and password are required to login")
 

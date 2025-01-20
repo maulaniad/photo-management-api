@@ -1,6 +1,5 @@
 from typing import Any, Generic, Iterable, Optional, Self, Sequence, TypeVar
 
-from django.contrib.auth.models import BaseUserManager
 from django.db.models import (Manager,
                               Model,
                               QuerySet,
@@ -22,8 +21,13 @@ class CustomQuerySet(QuerySet, Generic[_TT]):
         return super().get(*args, **kwargs)
 
 
-class CustomManager(BaseUserManager, Generic[_TT], Manager[_TT]):
+class CustomManager(Generic[_TT], Manager[_TT]):
+    def get_by_natural_key(self, username):
+        """Used internally by Django. DO NOT USE THIS METHOD."""
+        return self.get(**{self.model.USERNAME_FIELD: username})  # type: ignore
+
     def create_user(self, email, name, password=None, **extra_fields):
+        """Used by Management Commands. DO NOT USE THIS METHOD."""
         if not email:
             raise ValueError("The Email field must be set")
         email = self.normalize_email(email)  # type: ignore
@@ -33,6 +37,7 @@ class CustomManager(BaseUserManager, Generic[_TT], Manager[_TT]):
         return user
 
     def create_superuser(self, email, name, password=None, **extra_fields):
+        """Used by Management Commands. DO NOT USE THIS METHOD."""
         extra_fields.setdefault("is_superuser", True)
 
         if extra_fields.get("is_superuser") is not True:
@@ -69,7 +74,7 @@ class CustomManager(BaseUserManager, Generic[_TT], Manager[_TT]):
 
     def hard_delete(self):
         """Wipes data from the database."""
-        return super().delete()
+        return super().delete()                     # type: ignore
 
     def restore(self):
         """Undo soft deletions, nullifying the deleted date on the objects."""
@@ -83,7 +88,7 @@ class BaseModel(Model):
     date_updated = DateTimeField(auto_now=True)
     date_deleted = DateTimeField(null=True)
 
-    objects: CustomManager[Self] = CustomManager()  # type: ignore
+    objects: CustomManager[Self] = CustomManager()
 
     class Meta:
         abstract = True

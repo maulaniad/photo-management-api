@@ -1,8 +1,8 @@
-from django.contrib.auth.models import User
 from django.core.management.base import BaseCommand, CommandParser
 from django.db.transaction import atomic
 
-from database.models import Profile
+from database.models.profile import Profile
+from database.models.user import User
 
 
 class Command(BaseCommand):
@@ -28,11 +28,8 @@ class Command(BaseCommand):
 
         name = input("Enter Name: ")
 
-        new_profile = Profile.objects.create(
-            name=name, user=user_object
-        )
-
-        user_object.first_name = new_profile.name
+        new_profile = Profile.objects.create(name=name)
+        user_object.profile = new_profile
         user_object.save()
 
         self.stdout.write(self.style.SUCCESS("Success Created a new Profile"))

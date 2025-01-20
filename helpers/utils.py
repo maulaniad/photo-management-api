@@ -1,3 +1,4 @@
+from datetime import timedelta
 from fastnanoid import generate
 from itertools import islice
 from jwt import encode
@@ -6,7 +7,7 @@ from time import sleep
 from typing import Any
 
 from django.conf import settings
-from django.utils.timezone import now, timedelta
+from django.utils.timezone import now
 from rest_framework.utils.serializer_helpers import ReturnDict
 
 from helpers.types import EmailMessage

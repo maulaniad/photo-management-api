@@ -39,7 +39,7 @@ class ResponseRenderer(JSONRenderer):
 
         # Otherwise, use this customized response
         response_data = {
-            'status': renderer_context['response'].status_code,
+            # 'status': renderer_context['response'].status_code,
             'success': True,
             'message': data['message'],
             'data': data['data']

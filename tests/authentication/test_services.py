@@ -1,10 +1,11 @@
+from datetime import timedelta
 from decouple import config
 from freezegun import freeze_time
 from jwt import decode, ExpiredSignatureError
 
 from django.conf import settings
 from django.core.mail import outbox
-from django.utils.timezone import now, timedelta
+from django.utils.timezone import now
 
 from api.authentication.services import AuthService
 
@@ -90,4 +91,4 @@ class TestAuthenticationServices(APITestCase):
         )
 
         self.assertEqual(len(outbox), 1, msg="OTP mail should be sent")
-        self.assertIn(access_id, outbox[0].body, msg="OTP should be in email body")
+        self.assertIn(access_id, str(outbox[0].body), msg="OTP should be in email body")

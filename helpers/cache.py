@@ -38,7 +38,7 @@ class Cache:
         return cache.set_many(data, version=version)
 
     @staticmethod
-    def delete(key: str, version: int | None = None) -> None:
+    def delete(key: str, version: int | None = None) -> bool:
         """Delete a given key from the cache."""
         return cache.delete(key, version)
 

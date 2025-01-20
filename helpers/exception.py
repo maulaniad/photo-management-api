@@ -1,4 +1,4 @@
-from typing import Any, Iterable
+from typing import Any
 
 from django.http import JsonResponse
 from drf_standardized_errors.formatter import ExceptionFormatter
@@ -27,7 +27,7 @@ class StandardExceptionFormatter(ExceptionFormatter):
         e_attribute = f": {e.attr}" if e.attr else ""
 
         return {
-            'status': self.exc.status_code,
+            # 'status': self.exc.status_code,
             'success': False,
             'message': f"{e_detail}{e_attribute}",
             'error': error_response.type,
@@ -39,39 +39,39 @@ class HttpError:
     Custom HTTP error class to be raised on which will be caught by Standardized Response.
     """
     @staticmethod
-    def _400_(detail: Iterable[Any] | str):
+    def _400_(detail: Any):
         return ValidationError(detail)
 
     @staticmethod
-    def _401_(detail: Iterable[Any] | str):
+    def _401_(detail: Any):
         return AuthenticationFailed(detail)
 
     @staticmethod
-    def _403_(detail: Iterable[Any] | str):
+    def _403_(detail: Any):
         return PermissionDenied(detail)
 
     @staticmethod
-    def _404_(detail: Iterable[Any] | str):
+    def _404_(detail: Any):
         return NotFound(detail)
 
     @staticmethod
-    def _405_(method: str, detail: Iterable[Any] | str):
+    def _405_(method: str, detail: Any):
         return MethodNotAllowed(method, detail)
 
     @staticmethod
-    def _406_(detail: Iterable[Any] | str):
+    def _406_(detail: Any):
         return NotAcceptable(detail)
 
     @staticmethod
-    def _415_(media_type: str, detail: Iterable[Any] | str):
+    def _415_(media_type: str, detail: Any):
         return UnsupportedMediaType(media_type, detail)
 
     @staticmethod
-    def _429_(wait: float, detail: Iterable[Any] | str):
+    def _429_(wait: float, detail: Any):
         return Throttled(wait, detail)
 
     @staticmethod
-    def _500_(detail: Iterable[Any] | str):
+    def _500_(detail: Any):
         internal_server_error = APIException(detail)
         internal_server_error.status_code = 500
         internal_server_error.default_code = "internal_server_error"
@@ -81,7 +81,7 @@ class HttpError:
 def handler_404(request, exception):
     return JsonResponse(
         {
-            'status': 404,
+            # 'status': 404,
             'success': False,
             'message': f"Resource {request.path} was not found on the server.",
             'error': "invalid_url",
@@ -92,7 +92,7 @@ def handler_404(request, exception):
 def handler_500(request):
     return JsonResponse(
         {
-            'status': 500,
+            # 'status': 500,
             'success': False,
             'message': "Internal Server Error.",
             'error': "internal_server_error",

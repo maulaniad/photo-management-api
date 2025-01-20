@@ -1,9 +1,9 @@
 from django.conf import settings
 from rest_framework.generics import GenericAPIView
 
-from api.authentication.serializers import (ValidateCreateUserPayload,
-                                            ValidateLoginPayload,
-                                            ValidateVerifyOTPPayload)
+from api.authentication.serializers import (ValidateCreateUser,
+                                            ValidateLogin,
+                                            ValidateVerifyOTP)
 from api.authentication.services import AuthService
 from core.authentication import JWTAuthentication
 from helpers import HttpError, Request, Response
@@ -13,14 +13,14 @@ class LoginView(GenericAPIView):
     service = AuthService
 
     def post(self, request: Request, *args, **kwargs):
-        payload = ValidateLoginPayload(data=request.data)
+        payload = ValidateLogin(data=request.data)
 
         if not payload.is_valid():
             raise HttpError._400_(payload.errors)
 
         token, error = self.service.login(payload.data)
         if error:
-            raise HttpError._404_(error)
+            raise HttpError._401_(error)
 
         if settings.OTP_AUTH:
             self.service.create_otp(payload.data)
@@ -45,7 +45,7 @@ class VerifyOTPView(GenericAPIView):
     service = AuthService
 
     def post(self, request: Request, *args, **kwargs):
-        payload = ValidateVerifyOTPPayload(data=request.data)
+        payload = ValidateVerifyOTP(data=request.data)
 
         if not payload.is_valid():
             raise HttpError._400_(payload.errors)
@@ -61,7 +61,7 @@ class CreateUserView(GenericAPIView):
     service = AuthService
 
     def post(self, request: Request, *args, **kwargs):
-        payload = ValidateCreateUserPayload(data=request.data)
+        payload = ValidateCreateUser(data=request.data)
 
         if not payload.is_valid():
             raise HttpError._400_(payload.errors)
