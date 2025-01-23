@@ -1,8 +1,8 @@
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.db.models import EmailField, OneToOneField, CASCADE
 
+from database.models import Profile
 from database.models.base import BaseModel
-from database.models.profile import Profile
 
 
 class User(AbstractBaseUser, PermissionsMixin, BaseModel):

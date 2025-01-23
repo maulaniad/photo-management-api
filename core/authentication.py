@@ -10,7 +10,7 @@ from django.utils import timezone
 from rest_framework.authentication import BaseAuthentication
 from rest_framework.request import Request
 
-from database.models.user import User
+from database.models import User
 from database.repositories import UserRepo
 from helpers import HttpError
 

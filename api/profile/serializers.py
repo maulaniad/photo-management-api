@@ -4,7 +4,7 @@ from rest_framework.serializers import (ModelSerializer,
                                         ImageField,
                                         ValidationError)
 
-from database.models.profile import Profile
+from database.models import Profile
 
 
 class ValidateUpdateProfile(Serializer):

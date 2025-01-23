@@ -4,7 +4,7 @@ from django.contrib.auth.hashers import make_password
 from django.db.models import QuerySet
 
 from api.user.serializers import UserDataSerializer
-from database.models.user import User
+from database.models import User
 from database.repositories import UserRepo
 
 

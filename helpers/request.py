@@ -5,7 +5,7 @@ from rest_framework.request import Request as _Req
 
 
 def _user_model_():
-    from database.models.user import User
+    from database.models import User
     return User
 
 

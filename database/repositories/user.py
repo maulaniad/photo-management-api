@@ -1,6 +1,6 @@
 from django.db.models import Q
 
-from database.models.user import User
+from database.models import User
 
 
 class UserRepo:

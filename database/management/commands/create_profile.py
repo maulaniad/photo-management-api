@@ -1,8 +1,7 @@
 from django.core.management.base import BaseCommand, CommandParser
 from django.db.transaction import atomic
 
-from database.models.profile import Profile
-from database.models.user import User
+from database.models import User, Profile
 
 
 class Command(BaseCommand):

@@ -3,8 +3,7 @@ from typing import Any
 from django.db.models import Q
 from django.db.transaction import atomic
 
-from database.models.profile import Profile
-from database.models.user import User
+from database.models import User, Profile
 
 
 class ProfileRepo:
