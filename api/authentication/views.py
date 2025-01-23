@@ -10,7 +10,7 @@ from helpers import HttpError, Request, Response
 class LoginView(GenericAPIView):
     service = AuthService
 
-    def post(self, request: Request, *args, **kwargs) -> Response:
+    def post(self, request: Request, *args, **kwargs):
         payload = ValidateLogin(data=request.data)
 
         if not payload.is_valid():
@@ -31,7 +31,7 @@ class RefreshTokenView(GenericAPIView):
     authentication_classes = [JWTAuthentication]
     service = AuthService
 
-    def get(self, request: Request, *args, **kwargs) -> Response:
+    def get(self, request: Request, *args, **kwargs):
         token, error = self.service.refresh_token(request)
         if error:
             raise HttpError._401_(error)
@@ -42,7 +42,7 @@ class RefreshTokenView(GenericAPIView):
 class VerifyOTPView(GenericAPIView):
     service = AuthService
 
-    def post(self, request: Request, *args, **kwargs) -> Response:
+    def post(self, request: Request, *args, **kwargs):
         payload = ValidateVerifyOTP(data=request.data)
 
         if not payload.is_valid():

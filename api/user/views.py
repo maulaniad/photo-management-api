@@ -16,7 +16,7 @@ class UserView(ListCreateAPIView):
         user_query, _ = self.service.get_users(lazy=True)
         return user_query.order_by('-date_created')
 
-    def post(self, request: Request, *args, **kwargs) -> Response:
+    def post(self, request: Request, *args, **kwargs):
         payload = ValidateCreateUser(data=request.data)
 
         if not payload.is_valid():
@@ -33,7 +33,7 @@ class UserDetailView(GenericAPIView):
     authentication_classes = [JWTAuthentication]
     service = UserService
 
-    def get(self, request: Request, id: str) -> Response:
+    def get(self, request: Request, id: str):
         user_data, error = self.service.get_user(id)
         if error:
             raise HttpError._404_(error)

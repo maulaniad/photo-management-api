@@ -10,14 +10,14 @@ class ProfileView(GenericAPIView):
     authentication_classes = [JWTAuthentication]
     service = ProfileService
 
-    def get(self, request: Request, *args, **kwargs) -> Response:
+    def get(self, request: Request, *args, **kwargs):
         profile_data, error = self.service.get_current_profile(request)
         if error:
             raise HttpError._404_(error)
 
         return Response(profile_data)
 
-    def put(self, request: Request, *args, **kwargs) -> Response:
+    def put(self, request: Request, *args, **kwargs):
         payload = ValidateUpdateProfile(data=request.data)
 
         if not payload.is_valid():
@@ -34,14 +34,14 @@ class ProfileAvatarView(GenericAPIView):
     authentication_classes = [JWTAuthentication]
     service = ProfileService
 
-    def get(self, request: Request, *args, **kwargs) -> Response:
+    def get(self, request: Request, *args, **kwargs):
         avatar, error = self.service.get_current_profile_avatar(request)
         if error:
             raise HttpError._404_(error)
 
         return Response(avatar)
 
-    def put(self, request: Request, *args, **kwargs) -> Response:
+    def put(self, request: Request, *args, **kwargs):
         payload = ValidateUpdateProfileAvatar(data=request.FILES)
 
         if not payload.is_valid():
