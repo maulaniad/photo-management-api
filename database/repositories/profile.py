@@ -26,11 +26,14 @@ class ProfileRepo:
 
     @staticmethod
     @atomic
-    def update_or_create_profile(user_id: int,
+    def update_or_create_profile(user_id: int | str,
                                  name: str | None = None,
                                  phone: str | None = None,
                                  address: str | None = None):
-        user = User.objects.filter(id=user_id).select_related('profile').first()
+        user = User.objects.filter(
+            Q(id=user_id) | Q(oid=user_id)
+        ).select_related('profile').first()
+
         if not user:
             return None
 
