@@ -22,9 +22,9 @@ class StandardPagination(PageNumberPagination):
             'meta': {
                 'next': self.get_next_link(),
                 'prev': self.get_previous_link(),
-                'page_current': self.page.number if self.page else 0,
-                'page_total': ceil(data_count / page_size),
+                'page': self.page.number if self.page else 0,
                 'page_size': page_size,
+                'page_total': ceil(data_count / page_size),
                 'data_count': data_count,
             }
         })
