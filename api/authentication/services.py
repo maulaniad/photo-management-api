@@ -3,7 +3,7 @@ from typing import Any
 from django.conf import settings
 from django.contrib.auth.hashers import make_password, check_password
 
-from api.authentication.serializers import UserDataSerializer
+from api.user.serializers import UserDataSerializer
 from core.authentication import authenticate
 from database.repositories import UserRepo
 from helpers import Cache, Request
@@ -82,15 +82,3 @@ class AuthService:
         token = generate_token(serializer.data)
 
         return token, None
-
-    @staticmethod
-    def create_user(data: dict[str, Any]) -> tuple[bool, str | None]:
-        email = data.get('email', None)
-        password = data.get('password', None)
-
-        UserRepo.create_user(
-            email=email,
-            password=make_password(password)
-        )
-
-        return True, None

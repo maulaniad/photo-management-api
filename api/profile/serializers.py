@@ -23,8 +23,8 @@ class ValidateUpdateProfileAvatar(Serializer):
         if value.size > 5 * 1024 * 1024:
             raise ValidationError("Image size must not exceed 5MB.")
 
-        if value.content_type not in ('image/jpeg', 'image/png'):
-            raise ValidationError("Only JPEG and PNG images are allowed.")
+        if value.content_type not in ('image/jpeg', 'image/jpg', 'image/png', 'image/webp'):
+            raise ValidationError("Only JPEG, PNG and WEBP images are allowed.")
 
         return value
 
@@ -32,10 +32,12 @@ class ValidateUpdateProfileAvatar(Serializer):
 class ProfileDataSerializer(ModelSerializer):
     class Meta:
         model = Profile
-        exclude = ("id", "avatar")
+        depth = 0
+        exclude = ["id", "avatar"]
 
 
 class ProfileAvatarSerializer(ModelSerializer):
     class Meta:
         model = Profile
-        fields = ("avatar",)
+        depth = 0
+        fields = ["avatar"]

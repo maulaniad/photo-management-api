@@ -23,7 +23,7 @@ class ProfileService:
         return serializer.data, None
 
     @staticmethod
-    def update_profile(user_id: int, data: dict[str, Any]) -> tuple[Any, str | None]:
+    def update_profile(user_id: int | str, data: dict[str, Any]) -> tuple[Any, str | None]:
         name = data.get('name', None)
         phone = data.get('phone', None)
         address = data.get('address', None)
@@ -36,7 +36,7 @@ class ProfileService:
         return serializer.data, None
 
     @staticmethod
-    def update_profile_avatar(user_id: int, avatar: Any) -> tuple[Any, str | None]:
+    def update_profile_avatar(user_id: int | str, avatar: Any) -> tuple[Any, str | None]:
         profile = ProfileRepo.get_profile_by_user_id(user_id)
         if not profile:
             profile = ProfileRepo.update_or_create_profile(user_id)

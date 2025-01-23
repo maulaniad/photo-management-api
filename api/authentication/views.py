@@ -1,9 +1,7 @@
 from django.conf import settings
 from rest_framework.generics import GenericAPIView
 
-from api.authentication.serializers import (ValidateCreateUser,
-                                            ValidateLogin,
-                                            ValidateVerifyOTP)
+from api.authentication.serializers import ValidateLogin, ValidateVerifyOTP
 from api.authentication.services import AuthService
 from core.authentication import JWTAuthentication
 from helpers import HttpError, Request, Response
@@ -12,7 +10,7 @@ from helpers import HttpError, Request, Response
 class LoginView(GenericAPIView):
     service = AuthService
 
-    def post(self, request: Request, *args, **kwargs):
+    def post(self, request: Request, *args, **kwargs) -> Response:
         payload = ValidateLogin(data=request.data)
 
         if not payload.is_valid():
@@ -33,7 +31,7 @@ class RefreshTokenView(GenericAPIView):
     authentication_classes = [JWTAuthentication]
     service = AuthService
 
-    def get(self, request: Request, *args, **kwargs):
+    def get(self, request: Request, *args, **kwargs) -> Response:
         token, error = self.service.refresh_token(request)
         if error:
             raise HttpError._401_(error)
@@ -44,7 +42,7 @@ class RefreshTokenView(GenericAPIView):
 class VerifyOTPView(GenericAPIView):
     service = AuthService
 
-    def post(self, request: Request, *args, **kwargs):
+    def post(self, request: Request, *args, **kwargs) -> Response:
         payload = ValidateVerifyOTP(data=request.data)
 
         if not payload.is_valid():
@@ -55,19 +53,3 @@ class VerifyOTPView(GenericAPIView):
             raise HttpError._401_(error)
 
         return Response({'token': token}, message="OTP Verified")
-
-
-class CreateUserView(GenericAPIView):
-    service = AuthService
-
-    def post(self, request: Request, *args, **kwargs):
-        payload = ValidateCreateUser(data=request.data)
-
-        if not payload.is_valid():
-            raise HttpError._400_(payload.errors)
-
-        _, error = self.service.create_user(data=payload.data)
-        if error:
-            raise HttpError._500_(error)
-
-        return Response(None, message="User Created")
