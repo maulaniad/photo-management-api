@@ -63,7 +63,7 @@ INSTALLED_APPS = [
     "api",
     "core",
     "database",
-    "middleware",
+    "middlewares",
     "tasks",
 ]
 
