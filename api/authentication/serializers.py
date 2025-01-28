@@ -10,5 +10,5 @@ class ValidateLogin(Serializer):
 
 
 class ValidateVerifyOTP(Serializer):
-    email = EmailField(max_length=21, required=True)
+    email = EmailField(max_length=50, required=True)
     otp = IntegerField(required=True)
