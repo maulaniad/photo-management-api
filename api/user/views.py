@@ -26,7 +26,7 @@ class UserView(ListCreateAPIView):
         if error:
             raise HttpError._500_(error)
 
-        return Response(None, message="User Created")
+        return Response(None, status=201, message="User Created")
 
 
 class UserDetailView(GenericAPIView):
