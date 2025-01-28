@@ -74,7 +74,7 @@ class CustomManager(Generic[_TT], Manager[_TT]):
 
     def hard_delete(self):
         """Wipes data from the database."""
-        return super().delete()                     # type: ignore
+        return super().delete()  # type: ignore
 
     def restore(self):
         """Undo soft deletions, nullifying the deleted date on the objects."""
@@ -93,10 +93,26 @@ class BaseModel(Model):
     class Meta:
         abstract = True
 
+    def _get_all_related_objects(self):
+        """Get all related objects of this model instance, handling forward and reverse relations."""
+        for rel in self._meta.get_fields():
+            if rel.is_relation and rel.auto_created and not rel.concrete:
+                related_name = rel.get_accessor_name()                     # type: ignore
+                related_manager = getattr(self, related_name)              # type: ignore
+
+                if hasattr(related_manager, "all"):
+                    yield from related_manager.all()
+                else:
+                    yield related_manager
+
     def delete(self, using: str = "default"):
-        """Safe deletion through a soft-delete, marked with a deleted date."""
-        self.date_deleted = timezone.now()
+        """Safe deletion through a soft-delete, marked with a deleted date. Works with CASCADE deletions."""
+        self.deleted_at = timezone.now()
         self.save(using=using)
+
+        for related_object in self._get_all_related_objects():
+            if isinstance(related_object, BaseModel):
+                related_object.delete(using=using)
         return self
 
     def hard_delete(self, using: str = "default", keep_parents: bool = False):
