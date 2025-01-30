@@ -13,14 +13,5 @@ venv/
 *.pyc
 *.__pycache__
 
-static/*
-!static/__init__.py
-
-uploads/*
-!uploads/__init__.py
-
-logs/*
-!logs/__init__.py
-
 celerybeat-schedule*
 *.log
