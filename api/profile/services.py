@@ -25,10 +25,10 @@ class ProfileService:
     @staticmethod
     def update_profile(user_id: int | str, data: dict[str, Any]) -> tuple[Any, str | None]:
         name = data.get('name', None)
-        phone = data.get('phone', None)
+        bio = data.get('bio', None)
         address = data.get('address', None)
 
-        profile = ProfileRepo.update_or_create_profile(user_id, name, phone, address)
+        profile = ProfileRepo.update_or_create_profile(user_id, name, bio, address)
         if not profile:
             return None, "Failed to update profile"
 

@@ -27,7 +27,7 @@ class ProfileRepo:
     @atomic
     def update_or_create_profile(user_id: int | str,
                                  name: str | None = None,
-                                 phone: str | None = None,
+                                 bio: str | None = None,
                                  address: str | None = None):
         user = User.objects.filter(
             Q(id=user_id) | Q(oid=user_id)
@@ -39,7 +39,7 @@ class ProfileRepo:
         if not user.profile:
             profile = Profile.objects.create(
                 name=name,
-                phone=phone,
+                bio=bio,
                 address=address
             )
             user.profile = profile
@@ -47,7 +47,7 @@ class ProfileRepo:
             return profile
 
         user.profile.name = name if name else user.profile.name
-        user.profile.phone = phone if phone else user.profile.phone
+        user.profile.bio = bio if bio else user.profile.bio
         user.profile.address = address if address else user.profile.address
         user.profile.save()
         return user.profile

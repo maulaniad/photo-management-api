@@ -9,7 +9,7 @@ from database.models import Profile
 
 class ValidateUpdateProfile(Serializer):
     name = CharField(max_length=50, required=True)
-    phone = CharField(max_length=16, required=False, allow_null=True)
+    bio = CharField(max_length=1000, required=False, allow_null=True)
     address = CharField(max_length=255, required=False, allow_null=True)
 
 

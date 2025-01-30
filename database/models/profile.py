@@ -1,4 +1,4 @@
-from django.db.models import CharField, FileField
+from django.db.models import CharField, FileField, TextField
 
 from database.models.base import BaseModel
 
@@ -12,7 +12,7 @@ def upload_avatar(instance: "Profile", filename: str):
 
 class Profile(BaseModel):
     name = CharField(max_length=50, null=True, db_index=True)
-    phone = CharField(max_length=15, null=True)
+    bio = TextField(max_length=1000, null=True)
     address = CharField(max_length=255, null=True)
     avatar = FileField(upload_to=upload_avatar, null=True)
 
