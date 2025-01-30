@@ -1,3 +1,5 @@
+from typing import TYPE_CHECKING, Any
+
 from django.db.models import CharField, FileField, TextField
 
 from database.models.base import BaseModel
@@ -21,3 +23,10 @@ class Profile(BaseModel):
 
     def __str__(self):
         return self.name
+
+    if TYPE_CHECKING:
+        from django.db.models.fields.files import FieldFile
+        name: str | None | Any
+        bio: str | None | Any
+        address: str | None | Any
+        avatar: FieldFile | None | Any

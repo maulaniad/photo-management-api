@@ -1,3 +1,5 @@
+from typing import TYPE_CHECKING, Any
+
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.db.models import EmailField, CharField, OneToOneField, CASCADE
 
@@ -17,3 +19,8 @@ class User(AbstractBaseUser, PermissionsMixin, BaseModel):
 
     def __str__(self):
         return self.email
+
+    if TYPE_CHECKING:
+        email: str | Any
+        phone: str | None | Any
+        profile: Profile | None | Any
