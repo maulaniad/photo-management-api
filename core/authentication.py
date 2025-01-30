@@ -27,8 +27,7 @@ class AuthenticationBackend(BaseBackend):
         if not email or not password:
             raise HttpError._400_("Email and password are required to login")
 
-        user_data = self.repo.manager().filter(email=email).select_related('profile').first()
-
+        user_data = self.repo.get_user_by_email(email)
         if not user_data:
             return None
 
