@@ -21,6 +21,12 @@ class UserRepo:
         ).select_related('profile').first()
 
     @staticmethod
+    def get_user_by_phone(phone: str):
+        return User.objects.filter(
+            phone=phone
+        ).select_related('profile').first()
+
+    @staticmethod
     def create_user(email: str, password: str, is_superuser: bool = False):
         return User.objects.create(
             email=email,
