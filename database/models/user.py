@@ -8,9 +8,9 @@ from database.models.base import BaseModel
 
 
 class User(AbstractBaseUser, PermissionsMixin, BaseModel):
-    email = EmailField(max_length=50, unique=True)
-    phone = CharField(max_length=15, unique=True, null=True)
-    profile = OneToOneField(Profile, on_delete=CASCADE, null=True, related_name="user")
+    email = EmailField(max_length=50, unique=True, db_index=True)
+    phone = CharField(max_length=15, unique=True, null=True, db_index=True)
+    profile = OneToOneField(Profile, related_name="user", null=True, on_delete=CASCADE, db_index=True)
 
     USERNAME_FIELD = "email"
 

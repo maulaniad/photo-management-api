@@ -82,7 +82,7 @@ class CustomManager(Generic[_TT], Manager[_TT]):
 
 
 class BaseModel(Model):
-    id = BigAutoField(primary_key=True)
+    id = BigAutoField(primary_key=True, db_index=True)
     oid = CharField(max_length=21, default=generate_oid)
     date_created = DateTimeField(auto_now_add=True)
     date_updated = DateTimeField(auto_now=True)
