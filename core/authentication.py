@@ -23,7 +23,7 @@ def authenticate(request: Request | None, **credentials) -> User | None:
 class AuthenticationBackend(BaseBackend):
     repo = UserRepo
 
-    def authenticate(self, request: HttpRequest, email=None, password=None, **kwargs):
+    def authenticate(self, request: HttpRequest, email: str | None = None, password: str | None = None, **kwargs):
         if not email or not password:
             raise HttpError._400_("Email and password are required to login")
 
@@ -55,7 +55,7 @@ class JWTAuthentication(BaseAuthentication):
             token = auth_header.split(" ")[1]
             payload = decode(token, settings.SECRET_KEY, algorithms=[settings.JWT_ALGORITHM])
 
-            user = self.repo.get_user_by_email(email=payload['email'])
+            user = self.repo.get_user(payload['oid'])
             if not user:
                 raise HttpError._401_("User not registered")
 

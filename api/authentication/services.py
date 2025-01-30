@@ -3,7 +3,6 @@ from typing import Any
 from django.conf import settings
 from django.contrib.auth.hashers import make_password, check_password
 
-from api.user.serializers import UserDataSerializer
 from core.authentication import authenticate
 from database.repositories import UserRepo
 from helpers import Cache, Request
@@ -21,9 +20,7 @@ class AuthService:
         if not user_data:
             return None, "Invalid credentials"
 
-        serializer = UserDataSerializer(user_data)
-        encoded_token = generate_token(serializer.data)
-
+        encoded_token = generate_token({'oid': user_data.oid})
         return encoded_token, None
 
     @staticmethod
@@ -31,9 +28,7 @@ class AuthService:
         if not request.user.is_authenticated:
             return None, "User not authenticated"
 
-        serializer = UserDataSerializer(request.user)
-        encoded_token = generate_token(serializer.data)
-
+        encoded_token = generate_token({'oid': request.user.oid})
         return encoded_token, None
 
     @staticmethod
@@ -78,7 +73,8 @@ class AuthService:
         Cache.delete(f"otp_{email}")
 
         user_data = UserRepo.get_user_by_email(email=email)
-        serializer = UserDataSerializer(user_data)
-        token = generate_token(serializer.data)
+        if not user_data:
+            return None, "User is currently deactivated or does not exist"
 
+        token = generate_token({'oid': user_data.oid})
         return token, None
