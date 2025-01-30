@@ -19,14 +19,19 @@ def generate_oid(length: int = 21):
     return generate(size=length)
 
 
-def generate_token(data: dict[str, Any] | ReturnDict[str, Any]):
-    """Generates JWT token with given data."""
+def generate_token(data: dict[str, Any] | ReturnDict[str, Any], exp: int = 0):
+    """
+    Generates JWT token with given data.
+    Expiration time can be added in hours,
+    put minus integer to subtract the default expiration time
+    from `settings.JWT_EXP_HOURS`.
+    """
     time = now()
 
     encoded_token = encode(
         {
             **data,
-            'exp': (time + timedelta(hours=settings.JWT_EXP_HOURS)).timestamp(),
+            'exp': (time + timedelta(hours=settings.JWT_EXP_HOURS + exp)).timestamp(),
             'iat': time.timestamp()
         },
         key=settings.SECRET_KEY,
