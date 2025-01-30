@@ -27,9 +27,10 @@ class UserRepo:
         ).select_related('profile').first()
 
     @staticmethod
-    def create_user(email: str, password: str, is_superuser: bool = False):
+    def create_user(email: str, password: str, phone: str | None = None, is_superuser: bool = False):
         return User.objects.create(
             email=email,
+            phone=phone,
             password=password,
             is_superuser=is_superuser,
         )
