@@ -1,5 +1,5 @@
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
-from django.db.models import EmailField, OneToOneField, CASCADE
+from django.db.models import EmailField, CharField, OneToOneField, CASCADE
 
 from database.models import Profile
 from database.models.base import BaseModel
@@ -7,6 +7,7 @@ from database.models.base import BaseModel
 
 class User(AbstractBaseUser, PermissionsMixin, BaseModel):
     email = EmailField(max_length=50, unique=True)
+    phone = CharField(max_length=15, unique=True, null=True)
     profile = OneToOneField(Profile, on_delete=CASCADE, null=True, related_name="user")
 
     USERNAME_FIELD = "email"
