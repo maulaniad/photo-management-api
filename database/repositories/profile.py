@@ -1,6 +1,5 @@
-from typing import Any
-
 from django.db.models import Q
+from django.db.models.fields.files import FieldFile
 from django.db.transaction import atomic
 
 from database.models import User, Profile
@@ -53,7 +52,7 @@ class ProfileRepo:
         return user.profile
 
     @staticmethod
-    def update_profile_avatar(profile_id: int | str, avatar: Any):
+    def update_profile_avatar(profile_id: int | str, avatar: FieldFile):
         profile = Profile.objects.filter(Q(id=profile_id) | Q(oid=profile_id)).first()
         if not profile:
             return None
