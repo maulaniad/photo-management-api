@@ -79,7 +79,7 @@ def send_mass_email(emails: list[EmailMessage], fail_silently: bool = False):
     task_send_mass_email.delay(datatuple=datatuple, fail_silently=fail_silently)
 
 
-def send_mass_email_cluster(emails: list[EmailMessage], per_cluster: int = 250, fail_silently: bool = False, delay: int = 0):
+def send_mass_email_cluster(emails: list[EmailMessage], per_cluster: int = 250, fail_silently: bool = False, delay_seconds: float = 0):
     """Clustered mass email sending, useful for very large amount of emails to avoid limits."""
     for chunk in split_into_chunks(emails, per_cluster):
         datatuple = [
@@ -93,5 +93,5 @@ def send_mass_email_cluster(emails: list[EmailMessage], per_cluster: int = 250, 
 
         task_send_mass_email.delay(datatuple=datatuple, fail_silently=fail_silently)
 
-        if delay > 0:
-            sleep(delay)
+        if delay_seconds > 0:
+            sleep(delay_seconds)
