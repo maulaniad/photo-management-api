@@ -164,9 +164,11 @@ CACHES = {
 
 AUTH_USER_MODEL = "database.User"
 
+DATABASE_ENGINE = config('DB_ENGINE', default="postgresql", cast=str)
+
 DATABASES = {
     'default': {
-        'ENGINE': "django.db.backends.postgresql",
+        'ENGINE': f"django.db.backends.{DATABASE_ENGINE}",
         'NAME': config('DB_NAME', default="postgres", cast=str),
         'USER': config('DB_USER', default="postgres", cast=str),
         'PASSWORD': config('DB_PASS', default="postgres", cast=str),
