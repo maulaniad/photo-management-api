@@ -6,7 +6,7 @@ from database.models import User, Profile
 class ValidateCreateUser(ModelSerializer):
     class Meta:
         model = User
-        fields = ["email", "password"]
+        fields = ["email", "phone", "password"]
 
 
 class ProfileDataSerializer(ModelSerializer):
@@ -26,9 +26,10 @@ class UserDataSerializer(ModelSerializer):
             "date_updated",
             "date_deleted",
             "email",
+            "phone",
             "last_login",
             "is_superuser",
+            "profile",
             "groups",
-            "user_permissions",
-            "profile"
+            "user_permissions"
         ]
