@@ -11,7 +11,7 @@ class UserRepo:
     @staticmethod
     def get_user(user_id: int | str):
         return User.objects.filter(
-            Q(id=user_id) | Q(oid=user_id)
+            Q(id=user_id) if isinstance(user_id, int) else Q(oid=user_id)
         ).select_related('profile').first()
 
     @staticmethod

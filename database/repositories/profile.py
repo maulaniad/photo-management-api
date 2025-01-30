@@ -12,11 +12,15 @@ class ProfileRepo:
 
     @staticmethod
     def get_profile(profile_id: int | str):
-        return Profile.objects.filter(Q(id=profile_id) | Q(oid=profile_id)).first()
+        return Profile.objects.filter(
+            Q(id=profile_id) if isinstance(profile_id, int) else Q(oid=profile_id)
+        ).first()
 
     @staticmethod
     def get_profile_by_user_id(user_id: int | str):
-        return Profile.objects.filter(Q(user__id=user_id) | Q(user__oid=user_id)).first()
+        return Profile.objects.filter(
+            Q(user__id=user_id) if isinstance(user_id, int) else Q(user__oid=user_id)
+        ).first()
 
     @staticmethod
     def get_profile_by_email(email: str):
@@ -29,7 +33,7 @@ class ProfileRepo:
                                  bio: str | None = None,
                                  address: str | None = None):
         user = User.objects.filter(
-            Q(id=user_id) | Q(oid=user_id)
+            Q(id=user_id) if isinstance(user_id, int) else Q(oid=user_id)
         ).select_related('profile').first()
 
         if not user:
@@ -53,7 +57,9 @@ class ProfileRepo:
 
     @staticmethod
     def update_profile_avatar(profile_id: int | str, avatar: FieldFile):
-        profile = Profile.objects.filter(Q(id=profile_id) | Q(oid=profile_id)).first()
+        profile = Profile.objects.filter(
+            Q(id=profile_id) if isinstance(profile_id, int) else Q(oid=profile_id)
+        ).first()
         if not profile:
             return None
 
