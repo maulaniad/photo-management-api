@@ -662,6 +662,23 @@ argon2 = ["argon2-cffi (>=19.1.0)"]
 bcrypt = ["bcrypt"]
 
 [[package]]
+name = "django-cacheops"
+version = "7.1"
+description = "A slick ORM cache with automatic granular event-driven invalidation for Django."
+optional = false
+python-versions = ">=3.7"
+groups = ["main"]
+files = [
+    {file = "django_cacheops-7.1-py2.py3-none-any.whl", hash = "sha256:7d5e0f42e41ab4a8052130d33d9f3b26c47bef944ef2df0a64db92d70e51d87e"},
+    {file = "django_cacheops-7.1.tar.gz", hash = "sha256:ec079abb968557321ee208c6274820231820f98ca6377dda971f04981bc2ab52"},
+]
+
+[package.dependencies]
+django = ">=3.2"
+funcy = ">=1.8"
+redis = ">=3.0.0"
+
+[[package]]
 name = "django-celery-beat"
 version = "2.7.0"
 description = "Database-backed Periodic Tasks."
@@ -1087,6 +1104,18 @@ files = [
 
 [package.dependencies]
 python-dateutil = ">=2.7"
+
+[[package]]
+name = "funcy"
+version = "2.0"
+description = "A fancy and practical functional tools"
+optional = false
+python-versions = "*"
+groups = ["main"]
+files = [
+    {file = "funcy-2.0-py2.py3-none-any.whl", hash = "sha256:53df23c8bb1651b12f095df764bfb057935d49537a56de211b098f4c79614bb0"},
+    {file = "funcy-2.0.tar.gz", hash = "sha256:3963315d59d41c6f30c04bc910e10ab50a3ac4a225868bfa96feed133df075cb"},
+]
 
 [[package]]
 name = "gevent"
@@ -2374,4 +2403,4 @@ test = ["pytest"]
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.12"
-content-hash = "b3b92d237e30d86674094649a924a826e3ba5271256cdadc13283ecabbbb6a18"
+content-hash = "70fc2a981702746dfbc89ae178cf673f7c5b0491c9dd2f3782fdb35c6ac13995"

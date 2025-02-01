@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
 
+    "cacheops",
     "corsheaders",
     "django_celery_beat",
     "django_celery_results",
@@ -64,7 +65,7 @@ INSTALLED_APPS = [
     "core",
     "database",
     "middlewares",
-    "tasks",
+    "tasks"
 ]
 
 MIDDLEWARE = [
@@ -74,7 +75,7 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
-    "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware"
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -83,7 +84,7 @@ TEMPLATES = [
     {
         'BACKEND': "django.template.backends.django.DjangoTemplates",
         'DIRS': [
-            BASE_DIR / "templates",
+            BASE_DIR / "templates"
         ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -91,10 +92,10 @@ TEMPLATES = [
                 "django.template.context_processors.debug",
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
-                "django.contrib.messages.context_processors.messages",
-            ],
-        },
-    },
+                "django.contrib.messages.context_processors.messages"
+            ]
+        }
+    }
 ]
 
 WSGI_APPLICATION = "config.wsgi.application"
@@ -115,7 +116,7 @@ REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': ["helpers.response.ResponseRenderer"],
     'EXCEPTION_HANDLER': "drf_standardized_errors.handler.exception_handler",
     'DEFAULT_VERSIONING_CLASS': "core.api_versioning.APIVersioning",
-    'DEFAULT_VERSION': "v1",
+    'DEFAULT_VERSION': "v1"
 }
 
 
@@ -147,15 +148,25 @@ CELERY_RESULT_EXTENDED = True
 CACHES = {
     'default': {
         'BACKEND': "django_redis.cache.RedisCache",
-        'LOCATION': config('REDIS_URL', default="redis://localhost:6379/0"),
+        'LOCATION': config('REDIS_URL_PRIMARY', default="redis://localhost:6379/0"),
         'TIMEOUT': 300,
         'OPTIONS': {
             'CLIENT_CLASS': "django_redis.client.DefaultClient",
             'PARSER_CLASS': "redis.connection._HiredisParser",
-            'COMPRESSOR': "django_redis.compressors.lz4.Lz4Compressor",
+            'COMPRESSOR': "django_redis.compressors.lz4.Lz4Compressor"
         },
-        'KEY_PREFIX': PROJECT_NAME,
+        'KEY_PREFIX': "cache"
     }
+}
+
+CACHEOPS_REDIS = config('REDIS_URL_SECONDARY', default="redis://localhost:6379/1")
+
+CACHEOPS_TIMEOUT = 60 * 60
+
+CACHEOPS = {
+    'database.photo': {'ops': "all", 'timeout': CACHEOPS_TIMEOUT},
+    'database.session': {'ops': "all", 'timeout': CACHEOPS_TIMEOUT},
+    'database.user': {'ops': "all", 'timeout': CACHEOPS_TIMEOUT}
 }
 
 
@@ -173,7 +184,7 @@ DATABASES = {
         'USER': config('DB_USER', default="postgres", cast=str),
         'PASSWORD': config('DB_PASS', default="postgres", cast=str),
         'HOST': config('DB_HOST', default="localhost", cast=str),
-        'PORT': config('DB_PORT', default=5432, cast=int),
+        'PORT': config('DB_PORT', default=5432, cast=int)
     }
 }
 
@@ -188,7 +199,7 @@ STORAGES = {
             'access_key': config('AWS_S3_ACCESS_KEY', default="", cast=str),
             'secret_key': config('AWS_S3_SECRET_KEY', default="", cast=str),
             'bucket_name': config('AWS_S3_BUCKET_NAME', default="", cast=str),
-            'endpoint_url': config('AWS_S3_ENDPOINT_URL', default="", cast=str),
+            'endpoint_url': config('AWS_S3_ENDPOINT_URL', default="", cast=str)
         }
     },
     'staticfiles': {
@@ -229,7 +240,7 @@ SESSION_COOKIE_AGE = 604800
 
 AUTHENTICATION_BACKENDS = [
     "core.authentication.AuthenticationBackend",
-    "django.contrib.auth.backends.ModelBackend",
+    "django.contrib.auth.backends.ModelBackend"
 ]
 
 OTP_AUTH = config('OTP_AUTH', default=False, cast=bool)
@@ -248,7 +259,7 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
     {'NAME': "django.contrib.auth.password_validation.MinimumLengthValidator"},
     {'NAME': "django.contrib.auth.password_validation.CommonPasswordValidator"},
-    {'NAME': "django.contrib.auth.password_validation.NumericPasswordValidator"},
+    {'NAME': "django.contrib.auth.password_validation.NumericPasswordValidator"}
 ]
 
 PASSWORD_HASHERS = [ "django.contrib.auth.hashers.ScryptPasswordHasher" ]
@@ -308,59 +319,59 @@ LOGGING = {
     'formatters': {
         'verbose': {
             'format': "{levelname} {asctime} {module} {message}",
-            'style': "{",
+            'style': "{"
         },
         'simple': {
             'format': "{message}",
-            'style': "{",
-        },
+            'style': "{"
+        }
     },
     'handlers': {
         'console': {
             'level': "INFO",
             'class': CONSOLE_LOGGER_CLASS,
-            'formatter': "simple",
+            'formatter': "simple"
         },
         'file': {
             'level': "WARNING",
             'class': FILE_HANDLER,
             'filename': BASE_DIR / "logs" / "django.log",
-            'formatter': "verbose",
+            'formatter': "verbose"
         },
         'celery_beat': {
             'level': "INFO",
             'class': FILE_HANDLER,
             'filename': BASE_DIR / "logs" / "celery_beat.log",
-            'formatter': "verbose",
+            'formatter': "verbose"
         },
         'celery_worker': {
             'level': "INFO",
             'class': FILE_HANDLER,
             'filename': BASE_DIR / "logs" / "celery_worker.log",
-            'formatter': "verbose",
-        },
+            'formatter': "verbose"
+        }
     },
     'root': {
         'handlers': ["console"],
-        'level': "DEBUG",
+        'level': "DEBUG"
     },
     'loggers': {
         'django': {
             'handlers': ["file"],
             'level': "INFO",
-            'propagate': True,
+            'propagate': True
         },
         'celery': {
             'handlers': ["celery_worker"],
             'level': "INFO",
-            'propagate': True,
+            'propagate': True
         },
         'django_celery_beat': {
             'handlers': ["celery_beat"],
             'level': "INFO",
-            'propagate': True,
+            'propagate': True
         }
-    },
+    }
 }
 
 
