@@ -1,16 +1,14 @@
-from rest_framework.serializers import (ModelSerializer,
-                                        Serializer,
-                                        CharField,
-                                        ImageField,
-                                        ValidationError)
+from rest_framework.serializers import ModelSerializer, Serializer, ImageField
 
 from database.models import Profile
+from helpers.exception import ValidationError
 
 
-class ValidateUpdateProfile(Serializer):
-    name = CharField(max_length=50, required=True)
-    bio = CharField(max_length=1000, required=False, allow_null=True)
-    address = CharField(max_length=255, required=False, allow_null=True)
+class ValidateUpdateProfile(ModelSerializer):
+    class Meta:
+        model = Profile
+        depth = 0
+        fields = ["name", "bio", "address"]
 
 
 class ValidateUpdateProfileAvatar(Serializer):
@@ -23,7 +21,7 @@ class ValidateUpdateProfileAvatar(Serializer):
         if value.size > 5 * 1024 * 1024:
             raise ValidationError("Image size must not exceed 5MB.")
 
-        if value.content_type not in ('image/jpeg', 'image/jpg', 'image/png', 'image/webp'):
+        if value.content_type not in ["image/jpeg", "image/jpg", "image/png", "image/webp"]:
             raise ValidationError("Only JPEG, PNG and WEBP images are allowed.")
 
         return value
