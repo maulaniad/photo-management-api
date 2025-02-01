@@ -28,7 +28,7 @@ class TestAuthenticationViews(APITestCase):
         return super().setUp()
 
     def tearDown(self) -> None:
-        Cache.delete_pattern("otp_*")
+        Cache().delete_pattern("otp_*")
         return super().tearDown()
 
     def test_login_success_with_valid_credentials(self):
@@ -94,7 +94,7 @@ class TestAuthenticationViews(APITestCase):
             self.endpoints.verify_otp,
             data={
                 'access_id': login_res.data['data']['access_id'],
-                'otp': Cache.get(f"otp_{login_res.data['data']['access_id']}")['otp'],
+                'otp': Cache().get(f"otp_{login_res.data['data']['access_id']}")['otp'],
             },
             format="json"
         )

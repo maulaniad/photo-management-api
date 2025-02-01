@@ -36,7 +36,7 @@ class AuthService:
         email = data.get('email', None)
         otp_code = generate_otp()
 
-        Cache.set(
+        Cache().set(
             f"otp_{email}",
             {
                 'otp': make_password(str(otp_code)),
@@ -57,8 +57,9 @@ class AuthService:
     def verify_otp(data: dict[str, Any]) -> tuple[str | Any, str | None]:
         email = data.get('email', None)
         otp_code = data.get('otp', None)
+        cache = Cache()
 
-        cached_data = Cache.get(f"otp_{email}")
+        cached_data = cache.get(f"otp_{email}")
         if not cached_data:
             return None, "OTP has expired, please try again"
 
@@ -67,10 +68,10 @@ class AuthService:
 
         if not check_password(str(otp_code), cached_data['otp']):
             cached_data['retries'] += 1
-            Cache.set(f"otp_{email}", cached_data)
+            cache.set(f"otp_{email}", cached_data)
             return None, "Invalid One Time Password"
 
-        Cache.delete(f"otp_{email}")
+        cache.delete(f"otp_{email}")
 
         user_data = UserRepo.get_user_by_email(email=email)
         if not user_data:
