@@ -1,4 +1,4 @@
-from typing import Any, Generic, Iterable, Optional, Self, Sequence, TypeVar
+from typing import TYPE_CHECKING, Any, Generic, Optional, Self, TypeVar
 
 from django.db.models import (Manager,
                               Model,
@@ -19,6 +19,18 @@ class CustomQuerySet(QuerySet, Generic[_TT]):
 
     def get(self, *args: Any, **kwargs: Any) -> Self:
         return super().get(*args, **kwargs)
+
+    def delete(self) -> int:
+        """Soft deletes data safely by marking the deleted date on the objects."""
+        return super().update(date_deleted=timezone.now())
+
+    def hard_delete(self) -> tuple[int, dict[str, int]]:
+        """Wipes data from the database."""
+        return super().delete()
+
+    def restore(self) -> int:
+        """Undo soft deletions, nullifying the deleted date on the objects."""
+        return super().update(date_deleted=None)
 
 
 class CustomManager(Generic[_TT], Manager[_TT]):
@@ -45,8 +57,8 @@ class CustomManager(Generic[_TT], Manager[_TT]):
 
         return self.create_user(email, name, password, **extra_fields)
 
-    def get_queryset(self) -> QuerySet[_TT] | CustomQuerySet[_TT]:
-        return super().get_queryset().filter(date_deleted__isnull=True)
+    def get_queryset(self) -> CustomQuerySet[_TT]:
+        return CustomQuerySet(self.model, using=self._db).filter(date_deleted__isnull=True)
 
     def all_with_deleted(self) -> QuerySet[_TT]:
         """Fetch all objects from the database including soft-deleted ones."""
@@ -60,26 +72,6 @@ class CustomManager(Generic[_TT], Manager[_TT]):
         """Create a new object and save it to the database."""
         return super().create(**kwargs)
 
-    def bulk_create(self, objects: Iterable[Any], batch_size: int | Any = ..., ignore_conflicts: bool | Any = ..., update_conflicts: bool | Any = ..., update_fields: Sequence[str] | Any = ..., unique_fields: Sequence[str] | Any = ...) -> list[_TT]:
-        """Bulk create objects and save them to the database."""
-        return super().bulk_create(objects, batch_size, ignore_conflicts, update_conflicts, update_fields, unique_fields)
-
-    def bulk_update(self, objects: Iterable[Any], fields: Sequence[str], batch_size: int | Any = ...) -> int:
-        """Bulk update objects and save them to the database."""
-        return super().bulk_update(objects, fields, batch_size)
-
-    def delete(self):
-        """Soft deletes data safely by marking the deleted date on the objects."""
-        return super().update(date_deleted=timezone.now())
-
-    def hard_delete(self):
-        """Wipes data from the database."""
-        return super().delete()  # type: ignore
-
-    def restore(self):
-        """Undo soft deletions, nullifying the deleted date on the objects."""
-        return super().update(date_deleted=None)
-
 
 class BaseModel(Model):
     id = BigAutoField(primary_key=True, db_index=True)
@@ -88,10 +80,17 @@ class BaseModel(Model):
     date_updated = DateTimeField(auto_now=True)
     date_deleted = DateTimeField(null=True)
 
-    objects: CustomManager[Self] = CustomManager()
+    objects: CustomManager[Self] = CustomManager.from_queryset(CustomQuerySet[Self])()
 
     class Meta:
         abstract = True
+
+    if TYPE_CHECKING:
+        id: int | Any
+        oid: str | Any
+        date_created: DateTimeField | Any
+        date_updated: DateTimeField | Any
+        date_deleted: DateTimeField | Any
 
     def _get_all_related_objects(self):
         """Get all related objects of this model instance, handling forward and reverse relations."""
