@@ -161,12 +161,14 @@ CACHES = {
 
 CACHEOPS_REDIS = config('REDIS_URL_SECONDARY', default="redis://localhost:6379/1")
 
-CACHEOPS_TIMEOUT = 60 * 60
+CACHEOPS_DEFAULTS = {
+    'timeout': 60 * 60
+}
 
 CACHEOPS = {
-    'database.photo': {'ops': "all", 'timeout': CACHEOPS_TIMEOUT},
-    'database.session': {'ops': "all", 'timeout': CACHEOPS_TIMEOUT},
-    'database.user': {'ops': "all", 'timeout': CACHEOPS_TIMEOUT}
+    'database.photo': {'ops': "all"},
+    'database.session': {'ops': "all"},
+    'database.user': {'ops': "all"}
 }
 
 
@@ -384,7 +386,7 @@ TEST_RUNNER = "tests.test_runner.TestRunner"
 # Sentry
 # https://docs.sentry.io/platforms/python/configuration/options/
 
-SENTRY_DSN = config('SENTRY_DSN', default=None, cast=str)
+SENTRY_DSN = config('SENTRY_DSN', default="", cast=str)
 
 if not DEBUG and SENTRY_DSN:
     from sentry_sdk import init
