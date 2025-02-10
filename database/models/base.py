@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Any, Generic, Optional, Self, TypeVar
+from typing import TYPE_CHECKING, Any, Self, TypeVar
 
 from django.db.models import (Manager,
                               Model,
@@ -13,16 +13,10 @@ from helpers.utils import generate_oid
 
 _TT = TypeVar('_TT', bound='BaseModel')
 
-class CustomQuerySet(QuerySet, Generic[_TT]):
-    def first(self) -> Optional[Self]:
-        return super().first()
-
-    def get(self, *args: Any, **kwargs: Any) -> Self:
-        return super().get(*args, **kwargs)
-
+class CustomQuerySet(QuerySet[_TT]):
     def delete(self) -> int:
         """Soft deletes data safely by marking the deleted date on the objects."""
-        return super().update(date_deleted=timezone.now())
+        return self.update(date_deleted=timezone.now())
 
     def hard_delete(self) -> tuple[int, dict[str, int]]:
         """Wipes data from the database."""
@@ -30,10 +24,22 @@ class CustomQuerySet(QuerySet, Generic[_TT]):
 
     def restore(self) -> int:
         """Undo soft deletions, nullifying the deleted date on the objects."""
-        return super().update(date_deleted=None)
+        return self.update(date_deleted=None)
+
+    def all(self) -> "CustomQuerySet[_TT]":
+        """Fetch all objects from the database."""
+        return self.filter(date_deleted__isnull=True)
+
+    def all_with_deleted(self) -> "CustomQuerySet[_TT]":
+        """Fetch all objects from the database including the soft-deleted ones."""
+        return self
+
+    def deleted_only(self) -> "CustomQuerySet[_TT]":
+        """Fetch only soft-deleted objects from the database."""
+        return self.filter(date_deleted__isnull=False)
 
 
-class CustomManager(Generic[_TT], Manager[_TT]):
+class CustomManager(Manager[_TT]):
     def get_by_natural_key(self, username):
         """Used internally by Django. DO NOT USE THIS METHOD."""
         return self.get(**{self.model.USERNAME_FIELD: username})  # type: ignore
@@ -58,19 +64,21 @@ class CustomManager(Generic[_TT], Manager[_TT]):
         return self.create_user(email, name, password, **extra_fields)
 
     def get_queryset(self) -> CustomQuerySet[_TT]:
-        return CustomQuerySet(self.model, using=self._db).filter(date_deleted__isnull=True)
+        return CustomQuerySet(self.model, using=self._db)
 
-    def all_with_deleted(self) -> QuerySet[_TT]:
+    def filter(self, *args: Any, **kwargs: Any) -> CustomQuerySet[_TT]:
+        return self.get_queryset().filter(*args, **kwargs)
+
+    def all(self) -> CustomQuerySet[_TT]:
+        return self.get_queryset().filter(date_deleted__isnull=True)
+
+    def all_with_deleted(self) -> CustomQuerySet[_TT]:
         """Fetch all objects from the database including soft-deleted ones."""
-        return super().get_queryset()
+        return self.get_queryset()
 
-    def deleted_only(self) -> QuerySet[_TT]:
+    def deleted_only(self) -> CustomQuerySet[_TT]:
         """Fetch only soft-deleted objects from the database."""
-        return super().get_queryset().filter(date_deleted__isnull=False)
-
-    def create(self, **kwargs: Any) -> _TT:
-        """Create a new object and save it to the database."""
-        return super().create(**kwargs)
+        return self.get_queryset().filter(date_deleted__isnull=False)
 
 
 class BaseModel(Model):
@@ -80,7 +88,7 @@ class BaseModel(Model):
     date_updated = DateTimeField(auto_now=True)
     date_deleted = DateTimeField(null=True)
 
-    objects: CustomManager[Self] = CustomManager.from_queryset(CustomQuerySet[Self])()
+    objects: CustomManager[Self] = CustomManager()
 
     class Meta:
         abstract = True
